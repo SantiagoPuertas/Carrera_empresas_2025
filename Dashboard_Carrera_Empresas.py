@@ -1003,14 +1003,14 @@ img_buffer = generar_tarjeta_runner(
 )
 
 st.download_button(
-    "📸 Descargar tarjeta para redes",
+    "Descargar tarjeta para redes",
     data=img_buffer,
     file_name=f"{runner['nombre'].replace(' ', '_')}_carrera_empresas_2025.png",
     mime="image/png"
 )
 
 st.caption(
-    "💡 Descárgala y compártela en Instagram, Twitter o LinkedIn"
+    "Descárgala y compártela en Instagram, Twitter o LinkedIn"
 )
 
 
@@ -1019,4 +1019,5 @@ st.caption(
     "Los datos utilizados no se publican ni se distribuyen. "
     "Esta aplicación es solo una herramienta de análisis individual."
 )
+
 
