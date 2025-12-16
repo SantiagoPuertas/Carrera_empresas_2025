@@ -453,6 +453,52 @@ st.markdown(
 # -------------------------
 # TABLA: TOP EMPRESA + TÚ
 # -------------------------
+# =========================
+# RANKING DENTRO DE LA EMPRESA
+# =========================
+
+df_empresa_rank = (
+    df[
+        (df["empresa"] == runner["empresa"]) &
+        (df["Distancia"] == runner["Distancia"]) &
+        (df["Categoria"] == runner["Categoria"])
+    ]
+    .sort_values("tiempo_segundos")
+    .reset_index(drop=True)
+)
+
+# Puesto dentro de la empresa
+df_empresa_rank["puesto_empresa"] = df_empresa_rank.index + 1
+
+# Puesto general (misma distancia, ambos sexos)
+df_empresa_rank["puesto_absoluto_distancia"] = (
+    df_empresa_rank["tiempo_segundos"]
+    .apply(
+        lambda t: (
+            df[
+                (df["Distancia"] == runner["Distancia"]) &
+                (df["tiempo_segundos"] <= t)
+            ]
+            .shape[0]
+        )
+    )
+)
+
+# Puesto en categoría (sexo + distancia)
+df_empresa_rank["puesto_categoria"] = (
+    df_empresa_rank["tiempo_segundos"]
+    .apply(
+        lambda t: (
+            df[
+                (df["Distancia"] == runner["Distancia"]) &
+                (df["Categoria"] == runner["Categoria"]) &
+                (df["tiempo_segundos"] <= t)
+            ]
+            .shape[0]
+        )
+    )
+)
+
 top_n = 10
 
 df_mostrar = pd.concat([
@@ -460,15 +506,15 @@ df_mostrar = pd.concat([
     df_empresa_rank[df_empresa_rank["nombre"] == runner["nombre"]]
 ]).drop_duplicates()
 
+df_mostrar["Tiempo"] = df_mostrar["tiempo_segundos"].apply(segundos_a_hms_str)
+
 df_mostrar = df_mostrar[[
     "puesto_empresa",
     "puesto_absoluto_distancia",
     "puesto_categoria",
     "nombre",
-    "tiempo_segundos"
+    "Tiempo"
 ]]
-
-df_mostrar["Tiempo"] = df_mostrar["tiempo_segundos"].apply(segundos_a_hms_str)
 
 df_mostrar = df_mostrar.rename(columns={
     "puesto_empresa": "Puesto empresa",
@@ -476,12 +522,11 @@ df_mostrar = df_mostrar.rename(columns={
     "puesto_categoria": "Puesto categoría"
 })
 
-df_mostrar = df_mostrar.drop(columns=["tiempo_segundos"])
-
 st.dataframe(
     df_mostrar.sort_values("Puesto empresa"),
     use_container_width=True
 )
+
 
 
 # =========================
