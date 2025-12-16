@@ -33,99 +33,117 @@ def draw_text_shadow(draw, xy, text, font, fill, shadow=(0, 0, 0), offset=3):
     draw.text((x, y), text, font=font, fill=fill, anchor="mm")
 
 
-def generar_tarjeta_story(
+
+def generar_tarjeta_runner(
     nombre,
-    sexo,
     distancia,
+    sexo,
     tiempo,
     percentil,
-    empresa,
-    puesto,
-    output_path
+    puesto_empresa,
+    empresa
 ):
-    WIDTH, HEIGHT = 1080, 1920
+    # Tamaño Instagram-friendly (4:5)
+    W, H = 1080, 1350
 
-    fondo_path = "assets/fondo_story.png"
-    font_dir = "assets/fonts"
-
-    img = Image.open(fondo_path).resize((WIDTH, HEIGHT))
+    fondo = Image.open("fondo_tarjeta.png").resize((W, H))
+    img = fondo.copy()
     draw = ImageDraw.Draw(img)
 
-    # Fuentes
-    font_title = ImageFont.truetype(os.path.join(font_dir, "Montserrat-Bold.ttf"), 90)
-    font_name = ImageFont.truetype(os.path.join(font_dir, "Montserrat-Bold.ttf"), 110)
-    font_meta = ImageFont.truetype(os.path.join(font_dir, "Montserrat-Regular.ttf"), 55)
-    font_time = ImageFont.truetype(os.path.join(font_dir, "Montserrat-Bold.ttf"), 150)
-    font_small = ImageFont.truetype(os.path.join(font_dir, "Montserrat-Regular.ttf"), 55)
+    # Fuentes (fallback seguro)
+    try:
+        font_title = ImageFont.truetype("DejaVuSans-Bold.ttf", 64)
+        font_name_big = ImageFont.truetype("DejaVuSans-Bold.ttf", 86)
+        font_name_small = ImageFont.truetype("DejaVuSans-Bold.ttf", 70)
+        font_big = ImageFont.truetype("DejaVuSans-Bold.ttf", 88)
+        font_text = ImageFont.truetype("DejaVuSans.ttf", 46)
+    except:
+        font_title = font_name_big = font_name_small = font_big = font_text = ImageFont.load_default()
 
     # Colores
-    COLOR_TITLE = (20, 20, 20)
-    COLOR_NAME = (25, 85, 170)
-    COLOR_TEXT = (40, 40, 40)
-    COLOR_TIME = (15, 15, 15)
+    blanco = "#FFFFFF"
+    azul = "#205AEB"
+    gris = "#A0A0A0"
 
-    center_x = WIDTH // 2
+    # ---------- LAYOUT ----------
+    y = 160  # margen superior seguro
 
-    y_title = int(HEIGHT * 0.10)
-    y_name = int(HEIGHT * 0.20)
-    y_meta = int(HEIGHT * 0.28)
-    y_time = int(HEIGHT * 0.38)
-    y_stats = int(HEIGHT * 0.50)
-    y_footer = int(HEIGHT * 0.92)
-
-    # Texto
-    draw_text_shadow(
-        draw,
-        (center_x, y_title),
+    # Título
+    draw.text(
+        (W // 2, y),
         "Carrera de las Empresas 2025",
-        font_title,
-        COLOR_TITLE
+        font=font_title,
+        fill=blanco,
+        anchor="mm"
     )
+    y += 130
 
-    draw_text_shadow(
-        draw,
-        (center_x, y_name),
+    # Nombre (ajuste dinámico)
+    font_name = font_name_big if len(nombre) <= 22 else font_name_small
+
+    draw.text(
+        (W // 2, y),
         nombre,
-        font_name,
-        COLOR_NAME
+        font=font_name,
+        fill=azul,
+        anchor="mm"
     )
+    y += 110
 
+    # Subtítulo
     draw.text(
-        (center_x, y_meta),
+        (W // 2, y),
         f"{sexo} · {distancia}",
-        font=font_meta,
-        fill=COLOR_TEXT,
+        font=font_text,
+        fill=gris,
+        anchor="mm"
+    )
+    y += 130
+
+    # Tiempo
+    draw.text(
+        (W // 2, y),
+        f"{tiempo}",
+        font=font_big,
+        fill=blanco,
+        anchor="mm"
+    )
+    y += 140
+
+    # Percentil
+    draw.text(
+        (W // 2, y),
+        f"Percentil: {percentil:.1f} %",
+        font=font_text,
+        fill=blanco,
+        anchor="mm"
+    )
+    y += 80
+
+    # Puesto empresa
+    draw.text(
+        (W // 2, y),
+        f"Puesto en {empresa}: {puesto_empresa}",
+        font=font_text,
+        fill=blanco,
         anchor="mm"
     )
 
-    draw_text_shadow(
-        draw,
-        (center_x, y_time),
-        f"⏱ {tiempo}",
-        font_time,
-        COLOR_TIME
-    )
-
+    # Footer
     draw.text(
-        (center_x, y_stats),
-        f"Percentil: {percentil:.1f} %\nPuesto en {empresa}: {puesto}",
-        font=font_small,
-        fill=COLOR_TEXT,
-        anchor="mm",
-        align="center"
-    )
-
-    draw.text(
-        (center_x, y_footer),
+        (W // 2, H - 70),
         "dashcarreraempresas2025.streamlit.app",
-        font=font_small,
-        fill=(90, 90, 90),
+        font=font_text,
+        fill=gris,
         anchor="mm"
     )
 
-    img.save(output_path)
+    # Exportar a bytes
+    buffer = io.BytesIO()
+    img.save(buffer, format="PNG")
+    buffer.seek(0)
 
-
+    return buffer
 
 
 
@@ -908,29 +926,29 @@ st.plotly_chart(fig_gen, use_container_width=True)
 
 st.subheader("📸 Comparte tu resultado")
 
-if st.button("Generar tarjeta para redes"):
-    output_file = f"tarjeta_{runner['nombre'].replace(' ', '_')}.png"
+img_buffer = generar_tarjeta_runner(
+    nombre=runner["nombre"],
+    distancia=runner["Distancia"],
+    sexo=runner["Categoria"],
+    tiempo=segundos_a_hms_str(runner["tiempo_segundos"]),
+    percentil=mi_percentil,
+    puesto_empresa=int(df_empresa_rank.loc[
+        df_empresa_rank["nombre"] == runner["nombre"],
+        "puesto_empresa"
+    ].values[0]),
+    empresa=runner["empresa"]
+)
 
-    generar_tarjeta_story(
-        nombre=runner["nombre"],
-        sexo=runner["Categoria"],
-        distancia=runner["Distancia"],
-        tiempo=segundos_a_hms_str(runner["tiempo_segundos"]),
-        percentil=mi_percentil,
-        empresa=runner["empresa"],
-        puesto=int(mi_fila['puesto_empresa']),
-        output_path=output_file
-    )
+st.download_button(
+    "📸 Descargar tarjeta para redes",
+    data=img_buffer,
+    file_name=f"{runner['nombre'].replace(' ', '_')}_carrera_empresas_2025.png",
+    mime="image/png"
+)
 
-    st.image(output_file, use_column_width=True)
-
-    with open(output_file, "rb") as f:
-        st.download_button(
-            "⬇️ Descargar imagen",
-            f,
-            file_name=output_file,
-            mime="image/png"
-        )
+st.caption(
+    "💡 Descárgala y compártela en Instagram, Twitter o LinkedIn"
+)
 
 
 
