@@ -302,7 +302,6 @@ runner = matches.iloc[0]
 # ------------------------
 # UI
 # ------------------------
-st.title("Race Insights · Carrera de las Empresas 2025")
 
 modo = st.radio(
     "Compararte contra:",
