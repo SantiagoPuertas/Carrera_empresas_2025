@@ -5,6 +5,8 @@ from scipy.stats import gaussian_kde
 import numpy as np
 import plotly.graph_objects as go
 import unicodedata
+from PIL import Image, ImageDraw, ImageFont
+import io
 
 
 # ------------------------
@@ -24,6 +26,81 @@ def normalizar(texto):
     texto = "".join(c for c in texto if unicodedata.category(c) != "Mn")
     texto = " ".join(texto.split())
     return texto
+
+
+
+def generar_tarjeta_runner(
+    nombre,
+    distancia,
+    sexo,
+    tiempo,
+    percentil,
+    puesto_empresa,
+    empresa
+):
+    # Tamaño Instagram-friendly (4:5)
+    W, H = 1080, 1350
+    img = Image.new("RGB", (W, H), "#0E1117")
+    draw = ImageDraw.Draw(img)
+
+    # Cargar fuente (fallback seguro)
+    try:
+        font_title = ImageFont.truetype("DejaVuSans-Bold.ttf", 72)
+        font_big = ImageFont.truetype("DejaVuSans-Bold.ttf", 90)
+        font_text = ImageFont.truetype("DejaVuSans.ttf", 48)
+    except:
+        font_title = font_big = font_text = ImageFont.load_default()
+
+    # Colores
+    blanco = "#FFFFFF"
+    azul = "#4DA8FF"
+    gris = "#A0A0A0"
+    rojo = "#FF5C5C"
+
+    y = 120
+
+    # Título
+    draw.text((W//2, y), "Carrera de las Empresas 2025",
+              font=font_title, fill=blanco, anchor="mm")
+    y += 140
+
+    # Nombre
+    draw.text((W//2, y), nombre,
+              font=font_big, fill=azul, anchor="mm")
+    y += 130
+
+    # Subtítulo
+    draw.text((W//2, y), f"{sexo} · {distancia}",
+              font=font_text, fill=gris, anchor="mm")
+    y += 120
+
+    # Tiempo
+    draw.text((W//2, y), f"⏱ {tiempo}",
+              font=font_big, fill=blanco, anchor="mm")
+    y += 140
+
+    # Métricas
+    draw.text((W//2, y), f"Percentil: {percentil:.1f} %",
+              font=font_text, fill=blanco, anchor="mm")
+    y += 80
+
+    draw.text((W//2, y), f"Puesto en {empresa}: {puesto_empresa}",
+              font=font_text, fill=blanco, anchor="mm")
+    y += 120
+
+    # Footer
+    draw.text((W//2, H-80),
+              "dashcarreraempresas2025.streamlit.app",
+              font=font_text, fill=gris, anchor="mm")
+
+    # Convertir a bytes para descarga
+    buffer = io.BytesIO()
+    img.save(buffer, format="PNG")
+    buffer.seek(0)
+
+    return buffer
+
+
 
 
 # ------------------------
@@ -793,6 +870,36 @@ fig_gen.update_layout(
 )
 
 st.plotly_chart(fig_gen, use_container_width=True)
+
+
+
+
+st.subheader("Comparte tu resultado")
+
+img_buffer = generar_tarjeta_runner(
+    nombre=runner["nombre"],
+    distancia=runner["Distancia"],
+    sexo=runner["Categoria"],
+    tiempo=segundos_a_hms_str(runner["tiempo_segundos"]),
+    percentil=mi_percentil,
+    puesto_empresa=int(df_empresa_rank.loc[
+        df_empresa_rank["nombre"] == runner["nombre"],
+        "puesto_empresa"
+    ].values[0]),
+    empresa=runner["empresa"]
+)
+
+st.download_button(
+    "📸 Descargar tarjeta para redes",
+    data=img_buffer,
+    file_name=f"{runner['nombre'].replace(' ', '_')}_carrera_empresas_2025.png",
+    mime="image/png"
+)
+
+st.caption(
+    "💡 Descárgala y compártela en Instagram, Twitter o LinkedIn"
+)
+
 
 
 st.caption(
