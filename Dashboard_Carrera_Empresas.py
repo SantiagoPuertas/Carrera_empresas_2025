@@ -453,7 +453,6 @@ st.markdown(
 # -------------------------
 # TABLA: TOP EMPRESA + TÚ
 # -------------------------
-
 top_n = 10
 
 df_mostrar = pd.concat([
@@ -461,7 +460,6 @@ df_mostrar = pd.concat([
     df_empresa_rank[df_empresa_rank["nombre"] == runner["nombre"]]
 ]).drop_duplicates()
 
-# Seleccionar SOLO las columnas que queremos mostrar
 df_mostrar = df_mostrar[[
     "puesto_empresa",
     "puesto_absoluto_distancia",
@@ -470,20 +468,16 @@ df_mostrar = df_mostrar[[
     "tiempo_segundos"
 ]]
 
-# Convertir tiempo a HH:MM:SS
 df_mostrar["Tiempo"] = df_mostrar["tiempo_segundos"].apply(segundos_a_hms_str)
 
-# Renombrar columnas para presentación
 df_mostrar = df_mostrar.rename(columns={
     "puesto_empresa": "Puesto empresa",
     "puesto_absoluto_distancia": "Puesto general",
     "puesto_categoria": "Puesto categoría"
 })
 
-# Eliminar columna técnica
 df_mostrar = df_mostrar.drop(columns=["tiempo_segundos"])
 
-# Mostrar tabla ordenada por puesto en empresa
 st.dataframe(
     df_mostrar.sort_values("Puesto empresa"),
     use_container_width=True
