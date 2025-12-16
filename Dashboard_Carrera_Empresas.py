@@ -163,14 +163,6 @@ def generar_tarjeta_runner(
         anchor="mm"
     )
 
-    # Footer
-    draw.text(
-        (W // 2, H - 50),
-        "https://dashcarreraempresas2025.streamlit.app/",
-        font=font_text,
-        fill=negro,
-        anchor="mm"
-    )
 
     # Exportar a bytes
     buffer = io.BytesIO()
