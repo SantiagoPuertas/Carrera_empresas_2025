@@ -8,7 +8,10 @@ import unicodedata
 from PIL import Image, ImageDraw, ImageFont
 import io
 import plotly.io as pio
+import matplotlib
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
+
 
 
 
@@ -1025,3 +1028,4 @@ st.caption(
     "Los datos utilizados no se publican ni se distribuyen. "
     "Esta aplicación es solo una herramienta de análisis individual."
 )
+
