@@ -7,6 +7,9 @@ import plotly.graph_objects as go
 import unicodedata
 from PIL import Image, ImageDraw, ImageFont
 import io
+import plotly.io as pio
+
+
 
 
 # ------------------------
@@ -34,6 +37,16 @@ def draw_text_shadow(draw, xy, text, font, fill, shadow=(0, 0, 0), offset=3):
 
 
 
+def plotly_to_pil(fig, width=900, height=450):
+    img_bytes = pio.to_image(
+        fig,
+        format="png",
+        width=width,
+        height=height,
+        scale=2
+    )
+    return Image.open(io.BytesIO(img_bytes))
+
 def generar_tarjeta_runner(
     nombre,
     distancia,
@@ -41,7 +54,8 @@ def generar_tarjeta_runner(
     tiempo,
     percentil,
     puesto_empresa,
-    empresa
+    empresa,
+    img_cdf=None
 ):
     # Tamaño Instagram-friendly (4:5)
     W, H = 1080, 1350
@@ -61,7 +75,7 @@ def generar_tarjeta_runner(
         font_title = font_name_big = font_name_small = font_big = font_text = ImageFont.load_default()
 
     # Colores
-    blanco = "#FFFFFF"
+    gold = "#ffd700"
     azul = "#205AEB"
     gris = "#A0A0A0"
     negro = "#000000"
@@ -111,6 +125,21 @@ def generar_tarjeta_runner(
     )
     y += 140
 
+    # -------- CDF --------
+    if img_cdf is not None:
+        cdf_width = int(W * 0.9)
+        cdf_height = int(cdf_width * img_cdf.height / img_cdf.width)
+
+        img_cdf_resized = img_cdf.resize((cdf_width, cdf_height))
+
+        img.paste(
+            img_cdf_resized,
+            (W // 2 - cdf_width // 2, y)
+        )
+
+        y += cdf_height + 40
+
+
     # Percentil
     draw.text(
         (W // 2, y),
@@ -126,14 +155,14 @@ def generar_tarjeta_runner(
         (W // 2, y),
         f"Puesto en {empresa}: {puesto_empresa}",
         font=font_text,
-        fill=negro,
+        fill=gold,
         anchor="mm"
     )
 
     # Footer
     draw.text(
         (W // 2, H - 50),
-        "dashcarreraempresas2025.streamlit.app",
+        "https://dashcarreraempresas2025.streamlit.app/",
         font=font_text,
         fill=negro,
         anchor="mm"
@@ -737,6 +766,7 @@ st.metric(
 )
 
 
+img_cdf = plotly_to_pil(fig_cdf, width=900, height=420)
 
 
 # =========================
@@ -933,11 +963,14 @@ img_buffer = generar_tarjeta_runner(
     sexo=runner["Categoria"],
     tiempo=segundos_a_hms_str(runner["tiempo_segundos"]),
     percentil=mi_percentil,
-    puesto_empresa=int(df_empresa_rank.loc[
-        df_empresa_rank["nombre"] == runner["nombre"],
-        "puesto_empresa"
-    ].values[0]),
-    empresa=runner["empresa"]
+    puesto_empresa=int(
+        df_empresa_rank.loc[
+            df_empresa_rank["nombre"] == runner["nombre"],
+            "puesto_empresa"
+        ].values[0]
+    ),
+    empresa=runner["empresa"],
+    img_cdf=img_cdf
 )
 
 st.download_button(
@@ -957,7 +990,3 @@ st.caption(
     "Los datos utilizados no se publican ni se distribuyen. "
     "Esta aplicación es solo una herramienta de análisis individual."
 )
-
-
-
-
