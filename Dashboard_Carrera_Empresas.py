@@ -74,7 +74,7 @@ def generar_tarjeta_runner(
         (W // 2, y),
         "Carrera de las Empresas 2025",
         font=font_title,
-        fill=blanco,
+        fill=gris,
         anchor="mm"
     )
     y += 130
@@ -957,6 +957,7 @@ st.caption(
     "Los datos utilizados no se publican ni se distribuyen. "
     "Esta aplicación es solo una herramienta de análisis individual."
 )
+
 
 
 
