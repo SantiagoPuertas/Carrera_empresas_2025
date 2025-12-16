@@ -402,7 +402,7 @@ fig.add_trace(
         x=x_kde,
         y=y_kde,
         mode="lines",
-        line=dict(color="white", width=3),
+        line=dict(color="blue", width=3),
         name="Densidad suavizada",
         customdata=[segundos_a_hms_str(v) for v in x_kde],
         hovertemplate=(
@@ -1024,3 +1024,4 @@ st.caption(
     "Los datos utilizados no se publican ni se distribuyen. "
     "Esta aplicación es solo una herramienta de análisis individual."
 )
+
