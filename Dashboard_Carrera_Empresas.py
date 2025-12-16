@@ -79,7 +79,7 @@ def generar_tarjeta_runner(
         font_title = font_name_big = font_name_small = font_big = font_text = ImageFont.load_default()
 
     # Colores
-    gold = "#ffd700"
+    gold = "#ac9826"
     azul = "#205AEB"
     gris = "#A0A0A0"
     negro = "#000000"
@@ -1019,3 +1019,4 @@ st.caption(
     "Los datos utilizados no se publican ni se distribuyen. "
     "Esta aplicación es solo una herramienta de análisis individual."
 )
+
