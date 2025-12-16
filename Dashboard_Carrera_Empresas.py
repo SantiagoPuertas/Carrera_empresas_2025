@@ -364,7 +364,7 @@ x = subset["tiempo_segundos"].values
 n = len(x)
 
 # Configuración bins
-nbins = 40
+nbins = 60
 bin_width = (x.max() - x.min()) / nbins
 
 # KDE
@@ -378,19 +378,22 @@ fig = go.Figure()
 fig.add_trace(
     go.Histogram(
         x=x,
-        nbinsx=nbins,
+        xbins=dict(size=bin_size),
         marker=dict(
-            color="rgba(100, 180, 255, 0.4)",
+            color="rgba(100, 180, 255, 0.45)",
             line=dict(width=0)
         ),
         name="Distribución",
-        customdata=[segundos_a_hms_str(v) for v in x],
         hovertemplate=(
-            "Tiempo: %{customdata}<br>"
+            "Tiempo aprox: %{customdata}<br>"
             "Corredores: %{y}<extra></extra>"
-        )
+        ),
+        customdata=[
+            segundos_a_hms_str(v) for v in np.arange(x.min(), x.max(), bin_size)
+        ]
     )
 )
+
 
 
 # Curva KDE escalada
