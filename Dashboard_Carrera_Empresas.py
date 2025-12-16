@@ -609,6 +609,17 @@ fig_emp.update_layout(
     template="plotly_dark"
 )
 
+
+fig_emp.update_layout(
+    legend=dict(
+        orientation="h",        # horizontal
+        yanchor="top",
+        y=-0.25,                 # baja la leyenda
+        xanchor="center",
+        x=0.5
+    )
+)
+
 st.plotly_chart(fig_emp, use_container_width=True)
 
 
