@@ -8,6 +8,8 @@ import unicodedata
 from PIL import Image, ImageDraw, ImageFont
 import io
 import plotly.io as pio
+import matplotlib.pyplot as plt
+
 
 
 
@@ -176,6 +178,39 @@ def generar_tarjeta_runner(
     return buffer
 
 
+def generar_cdf_matplotlib(subset, runner_time):
+    x = np.sort(subset["tiempo_segundos"].values)
+    y = np.arange(1, len(x) + 1) / len(x) * 100
+
+    fig, ax = plt.subplots(figsize=(6, 3), dpi=200)
+
+    ax.plot(x, y, color="#205AEB", linewidth=2)
+    ax.axvline(runner_time, color="red", linestyle="--", linewidth=2)
+
+    percentil = (x < runner_time).mean() * 100
+    ax.axhline(percentil, color="red", linestyle=":", linewidth=1.5)
+
+    ax.set_xlim(x.min(), x.max())
+    ax.set_ylim(0, 100)
+
+    ax.set_yticks([0, 25, 50, 75, 100])
+    ax.set_ylabel("Percentil", fontsize=9)
+
+    ticks = np.linspace(x.min(), x.max(), 5)
+    ax.set_xticks(ticks)
+    ax.set_xticklabels([segundos_a_hms_str(v) for v in ticks], fontsize=8)
+
+    ax.grid(alpha=0.3)
+    ax.set_title("CDF", fontsize=10)
+
+    plt.tight_layout()
+
+    buf = io.BytesIO()
+    fig.savefig(buf, format="png", transparent=True)
+    plt.close(fig)
+    buf.seek(0)
+
+    return Image.open(buf)
 
 
 # ------------------------
@@ -766,7 +801,7 @@ st.metric(
 )
 
 
-img_cdf = plotly_to_pil(fig_cdf, width=900, height=420)
+
 
 
 # =========================
@@ -953,7 +988,7 @@ st.plotly_chart(fig_gen, use_container_width=True)
 # =========================
 # compartir resultado
 # =========================
-
+img_cdf = generar_cdf_matplotlib(subset, runner["tiempo_segundos"])
 
 st.subheader("📸 Comparte tu resultado")
 
