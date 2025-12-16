@@ -389,7 +389,7 @@ fig.add_trace(
             "Corredores: %{y}<extra></extra>"
         ),
         customdata=[
-            segundos_a_hms_str(v) for v in np.arange(x.min(), x.max(), bin_size)
+            segundos_a_hms_str(v) for v in np.arange(x.min(), x.max(), nbins)
         ]
     )
 )
