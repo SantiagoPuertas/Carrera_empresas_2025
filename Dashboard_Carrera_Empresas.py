@@ -1022,8 +1022,12 @@ st.caption(
 
 st.caption(
     "Proyecto desarrollado por Santiago Puertas"
+)
+
+st.caption(
     "Los datos utilizados no se publican ni se distribuyen. "
     "Esta aplicación es solo una herramienta de análisis individual."
 )
+
 
 
