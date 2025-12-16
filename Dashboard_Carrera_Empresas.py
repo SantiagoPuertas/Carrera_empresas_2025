@@ -16,7 +16,6 @@ import matplotlib.pyplot as plt
 
 
 
-
 # ------------------------
 # FUNCIONES
 # ------------------------
@@ -1028,4 +1027,3 @@ st.caption(
     "Los datos utilizados no se publican ni se distribuyen. "
     "Esta aplicación es solo una herramienta de análisis individual."
 )
-
