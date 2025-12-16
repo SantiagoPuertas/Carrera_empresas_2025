@@ -38,9 +38,11 @@ def generar_tarjeta_runner(
     puesto_empresa,
     empresa
 ):
-    # Tamaño Instagram-friendly (4:5)
-    W, H = 1080, 1350
-    img = Image.new("RGB", (W, H), "#0E1117")
+    # Tamaño Instagram-story 
+    W, H = 1080, 1920
+
+    fondo = Image.open("fondo_tarjeta.png").resize((W, H))
+    img = fondo.copy()
     draw = ImageDraw.Draw(img)
 
     # Fuentes (fallback seguro)
@@ -55,8 +57,8 @@ def generar_tarjeta_runner(
 
     # Colores
     blanco = "#FFFFFF"
-    azul = "#4DA8FF"
-    gris = "#A0A0A0"
+    azul = "#1F5EFF"
+    gris = "#2E2E2E"
 
     # ---------- LAYOUT ----------
     y = 160  # margen superior seguro
@@ -96,7 +98,7 @@ def generar_tarjeta_runner(
     # Tiempo
     draw.text(
         (W // 2, y),
-        f"⏱ {tiempo}",
+        f"{tiempo}",
         font=font_big,
         fill=blanco,
         anchor="mm"
