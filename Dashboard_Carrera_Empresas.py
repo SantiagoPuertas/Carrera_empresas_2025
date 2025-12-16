@@ -133,7 +133,7 @@ def generar_tarjeta_runner(
     # Footer
     draw.text(
         (W // 2, H - 70),
-        "dashcarreraempresas2025.streamlit.app",
+        "https://dashcarreraempresas2025.streamlit.app/",
         font=font_text,
         fill=negro,
         anchor="mm"
@@ -957,3 +957,4 @@ st.caption(
     "Los datos utilizados no se publican ni se distribuyen. "
     "Esta aplicación es solo una herramienta de análisis individual."
 )
+
