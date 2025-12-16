@@ -378,7 +378,7 @@ fig = go.Figure()
 fig.add_trace(
     go.Histogram(
         x=x,
-        xbins=dict(size=bin_size),
+        xbins=dict(size=nbins),
         marker=dict(
             color="rgba(100, 180, 255, 0.45)",
             line=dict(width=0)
