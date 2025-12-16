@@ -13,7 +13,14 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 
+st.set_page_config(
+    page_title="Race Insights · Carrera de las Empresas 2025",
+    page_icon="🏃‍♂️",
+    layout="wide"
+)
 
+st.title("Race Insights · Carrera de las Empresas 2025")
+st.caption("Análisis interactivo de rendimiento y comparativas por empresa")
 
 
 # ------------------------
@@ -207,19 +214,9 @@ def generar_cdf_matplotlib(subset, runner_time):
     return Image.open(buf)
 
 
-# ------------------------
-# CARGA DE DATOS
-# ------------------------
-
-#df = pd.read_excel(
-#    "clasificacion_carrera_empresas_2025.xlsx",
-#    sheet_name="total"
-#)
-
-
 
 # -------------------------
-# CARGA DE DATOS DESDE GOOGLE SHEETS
+# CARGA DE DATOS
 # -------------------------
 
 @st.cache_data(ttl=3600)  # 1 hora
@@ -227,7 +224,7 @@ def cargar_datos():
     url = st.secrets["DATA_URL"]
     return pd.read_excel(url, sheet_name="total")
 
-# ------------------------cargamos la data
+# ------------------------cargamos data
 df = cargar_datos()
 # ------------------------
 
@@ -305,10 +302,7 @@ runner = matches.iloc[0]
 # ------------------------
 # UI
 # ------------------------
-st.title("Análisis individual de rendimiento")
-
-
-
+st.title("Race Insights · Carrera de las Empresas 2025")
 
 modo = st.radio(
     "Compararte contra:",
@@ -319,16 +313,9 @@ modo = st.radio(
     ]
 )
 
-
-
-
-
 # ------------------------
 # DATOS DEL CORREDOR
 # ------------------------
-
-
-
 
 st.subheader("Datos del corredor")
 st.write({
@@ -652,10 +639,8 @@ st.markdown(
     """
 )
 
-# -------------------------
-# TABLA: TOP EMPRESA + TÚ
-# -------------------------
 # =========================
+# TABLA: TOP EMPRESA + TÚ
 # RANKING DENTRO DE LA EMPRESA
 # =========================
 
@@ -814,8 +799,6 @@ st.metric(
     "Tu percentil",
     f"{mi_percentil:.1f} %"
 )
-
-
 
 
 
