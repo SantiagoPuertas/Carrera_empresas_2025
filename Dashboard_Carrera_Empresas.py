@@ -917,11 +917,10 @@ else:
         (df["Categoria"] == sexo_sel) &
         (df["Distancia"] == dist_sel)
     ]
-
-subset_gen = df[
-    (df["Categoria"] == sexo_sel) &
-    (df["Distancia"] == dist_sel)
-]
+    
+if subset_gen.empty:
+    st.warning("No hay datos para esta combinación de filtros.")
+    st.stop()
 
 # =========================
 # HISTOGRAMA MANUAL
