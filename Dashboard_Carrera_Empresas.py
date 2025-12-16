@@ -464,6 +464,16 @@ fig.update_layout(
     template="plotly_dark"
 )
 
+fig.update_layout(
+    legend=dict(
+        orientation="h",        # horizontal
+        yanchor="top",
+        y=-0.25,                 # baja la leyenda
+        xanchor="center",
+        x=0.5
+    )
+)
+
 st.plotly_chart(fig, use_container_width=True)
 
 
@@ -1019,5 +1029,3 @@ st.caption(
     "Los datos utilizados no se publican ni se distribuyen. "
     "Esta aplicación es solo una herramienta de análisis individual."
 )
-
-
