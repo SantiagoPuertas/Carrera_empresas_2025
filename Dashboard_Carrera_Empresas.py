@@ -43,62 +43,101 @@ def generar_tarjeta_runner(
     img = Image.new("RGB", (W, H), "#0E1117")
     draw = ImageDraw.Draw(img)
 
-    # Cargar fuente (fallback seguro)
+    # Fuentes (fallback seguro)
     try:
-        font_title = ImageFont.truetype("DejaVuSans-Bold.ttf", 72)
-        font_big = ImageFont.truetype("DejaVuSans-Bold.ttf", 90)
-        font_text = ImageFont.truetype("DejaVuSans.ttf", 48)
+        font_title = ImageFont.truetype("DejaVuSans-Bold.ttf", 64)
+        font_name_big = ImageFont.truetype("DejaVuSans-Bold.ttf", 86)
+        font_name_small = ImageFont.truetype("DejaVuSans-Bold.ttf", 70)
+        font_big = ImageFont.truetype("DejaVuSans-Bold.ttf", 88)
+        font_text = ImageFont.truetype("DejaVuSans.ttf", 46)
     except:
-        font_title = font_big = font_text = ImageFont.load_default()
+        font_title = font_name_big = font_name_small = font_big = font_text = ImageFont.load_default()
 
     # Colores
     blanco = "#FFFFFF"
     azul = "#4DA8FF"
     gris = "#A0A0A0"
-    rojo = "#FF5C5C"
 
-    y = 120
+    # ---------- LAYOUT ----------
+    y = 160  # margen superior seguro
 
     # Título
-    draw.text((W//2, y), "Carrera de las Empresas 2025",
-              font=font_title, fill=blanco, anchor="mm")
-    y += 140
-
-    # Nombre
-    draw.text((W//2, y), nombre,
-              font=font_big, fill=azul, anchor="mm")
+    draw.text(
+        (W // 2, y),
+        "Carrera de las Empresas 2025",
+        font=font_title,
+        fill=blanco,
+        anchor="mm"
+    )
     y += 130
 
+    # Nombre (ajuste dinámico)
+    font_name = font_name_big if len(nombre) <= 22 else font_name_small
+
+    draw.text(
+        (W // 2, y),
+        nombre,
+        font=font_name,
+        fill=azul,
+        anchor="mm"
+    )
+    y += 110
+
     # Subtítulo
-    draw.text((W//2, y), f"{sexo} · {distancia}",
-              font=font_text, fill=gris, anchor="mm")
-    y += 120
+    draw.text(
+        (W // 2, y),
+        f"{sexo} · {distancia}",
+        font=font_text,
+        fill=gris,
+        anchor="mm"
+    )
+    y += 130
 
     # Tiempo
-    draw.text((W//2, y), f"⏱ {tiempo}",
-              font=font_big, fill=blanco, anchor="mm")
+    draw.text(
+        (W // 2, y),
+        f"⏱ {tiempo}",
+        font=font_big,
+        fill=blanco,
+        anchor="mm"
+    )
     y += 140
 
-    # Métricas
-    draw.text((W//2, y), f"Percentil: {percentil:.1f} %",
-              font=font_text, fill=blanco, anchor="mm")
+    # Percentil
+    draw.text(
+        (W // 2, y),
+        f"Percentil: {percentil:.1f} %",
+        font=font_text,
+        fill=blanco,
+        anchor="mm"
+    )
     y += 80
 
-    draw.text((W//2, y), f"Puesto en {empresa}: {puesto_empresa}",
-              font=font_text, fill=blanco, anchor="mm")
-    y += 120
+    # Puesto empresa
+    draw.text(
+        (W // 2, y),
+        f"Puesto en {empresa}: {puesto_empresa}",
+        font=font_text,
+        fill=blanco,
+        anchor="mm"
+    )
 
     # Footer
-    draw.text((W//2, H-80),
-              "dashcarreraempresas2025.streamlit.app",
-              font=font_text, fill=gris, anchor="mm")
+    draw.text(
+        (W // 2, H - 70),
+        "dashcarreraempresas2025.streamlit.app",
+        font=font_text,
+        fill=gris,
+        anchor="mm"
+    )
 
-    # Convertir a bytes para descarga
+    # Exportar a bytes
     buffer = io.BytesIO()
     img.save(buffer, format="PNG")
     buffer.seek(0)
 
     return buffer
+
 
 
 
