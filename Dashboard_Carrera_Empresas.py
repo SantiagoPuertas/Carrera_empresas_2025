@@ -64,6 +64,7 @@ def generar_tarjeta_runner(
     blanco = "#FFFFFF"
     azul = "#205AEB"
     gris = "#A0A0A0"
+    negro = "#000000"
 
     # ---------- LAYOUT ----------
     y = 160  # margen superior seguro
@@ -105,7 +106,7 @@ def generar_tarjeta_runner(
         (W // 2, y),
         f"{tiempo}",
         font=font_big,
-        fill=blanco,
+        fill=negro,
         anchor="mm"
     )
     y += 140
@@ -115,7 +116,7 @@ def generar_tarjeta_runner(
         (W // 2, y),
         f"Percentil: {percentil:.1f} %",
         font=font_text,
-        fill=blanco,
+        fill=negro,
         anchor="mm"
     )
     y += 80
@@ -125,7 +126,7 @@ def generar_tarjeta_runner(
         (W // 2, y),
         f"Puesto en {empresa}: {puesto_empresa}",
         font=font_text,
-        fill=blanco,
+        fill=negro,
         anchor="mm"
     )
 
@@ -134,7 +135,7 @@ def generar_tarjeta_runner(
         (W // 2, H - 70),
         "dashcarreraempresas2025.streamlit.app",
         font=font_text,
-        fill=gris,
+        fill=negro,
         anchor="mm"
     )
 
